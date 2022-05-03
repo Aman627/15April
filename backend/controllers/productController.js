@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Product = require("../models/Product");
 
 // @desc Fetch all products
-// @route /api/products
+// @route GET /api/products
 // @access public
 const getProducts = asyncHandler(async (req, res) => {
   const prodcuts = await Product.find({});
@@ -10,7 +10,7 @@ const getProducts = asyncHandler(async (req, res) => {
 });
 
 // @desc Fetch single products
-// @route /api/products/:id
+// @route GET /api/products/:id
 // @access public
 const getProductById = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);

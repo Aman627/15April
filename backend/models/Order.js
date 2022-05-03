@@ -21,11 +21,13 @@ const orderSchema = mongoose.Schema(
       },
     ],
     shippingAddress: {
+      fullname: { type: String, required: true },
+      houseNumber: { type: String, required: true },
       address: { type: String, required: true },
-      postalCode: { type: String, required: true },
-      country: { type: String, required: true },
-      state: { type: String, required: true },
+      landmark: { type: String, required: true },
       city: { type: String, required: true },
+      pincode: { type: String, required: true },
+      alternativePhone: { type: String, required: true },
     },
     paymentMethod: {
       type: String,
@@ -36,12 +38,12 @@ const orderSchema = mongoose.Schema(
       status: { type: String },
       update_time: { type: String },
     },
-    taxprice: {
+    itemPrice: {
       type: Number,
       required: true,
       default: 0.0,
     },
-    shippingPrice: {
+    convenienceFee: {
       type: Number,
       required: true,
       default: 0.0,

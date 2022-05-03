@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Col, Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { savePaymentMethod } from "../actions/cartActions";
 import CheckoutSteps from "../components/CheckoutSteps";
 
 import FormContainer from "../components/FormContainer";
@@ -22,7 +23,7 @@ const PaymentMethodScreen = () => {
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
-    //dispatch method
+    dispatch(savePaymentMethod(PaymentMethod));
     navigate("/placeorder");
   };
   return (
@@ -37,27 +38,34 @@ const PaymentMethodScreen = () => {
               type="radio"
               label="UPI"
               id="UPI"
+              value="UPI"
               name="paymentMethod"
-              checked
-              onChange={(e) => setPaymentMethod.target.value(e)}
+              onChange={(e) => setPaymentMethod(e.target.value)}
             ></Form.Check>
             <Form.Check
               type="radio"
               label="debit card"
+              value="debit card"
               id="debitCard"
               name="paymentMethod"
-              onChange={(e) => setPaymentMethod.target.value(e)}
+              onChange={(e) => setPaymentMethod(e.target.value)}
             ></Form.Check>
             <Form.Check
               type="radio"
               label="credit card"
+              value="credit card"
               id="creditCard"
               name="paymentMethod"
-              onChange={(e) => setPaymentMethod.target.value(e)}
+              onChange={(e) => setPaymentMethod(e.target.value)}
             ></Form.Check>
           </Col>
         </Form.Group>
-        <Button className="my-2" type="submit" varient="primary">
+        <Button
+          className="my-2"
+          type="submit"
+          varient="primary"
+          disabled={PaymentMethod === ""}
+        >
           Continue
         </Button>
       </Form>
