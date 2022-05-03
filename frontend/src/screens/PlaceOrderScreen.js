@@ -8,6 +8,17 @@ import CheckoutSteps from "../components/CheckoutSteps";
 const PlaceOrderScreen = () => {
   const cart = useSelector((state) => state.cart);
 
+  const addDecimels = (num) => {
+    return (Math.round(num * 100) / 100).toFixed(2);
+  };
+  cart.itemPrice = addDecimels(
+    cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
+  );
+  cart.convenienceFee = addDecimels(Number(489));
+  cart.total = addDecimels(
+    Number(cart.itemPrice) + Number(cart.convenienceFee)
+  );
+
   const placeOrderHandler = () => {
     console.log("order");
   };
@@ -22,6 +33,10 @@ const PlaceOrderScreen = () => {
               <h2>Shipping</h2>
               <p>
                 <strong>Address: </strong>
+                {cart.shippingAddress.houseNumber},
+                {cart.shippingAddress.address},{cart.shippingAddress.landmark},
+                {cart.shippingAddress.city},{cart.shippingAddress.pincode}, +91
+                {cart.shippingAddress.alternativePhone}
               </p>
             </ListGroup.Item>
             <ListGroup.Item>
@@ -54,7 +69,8 @@ const PlaceOrderScreen = () => {
                           </Link>
                         </Col>
                         <Col md={4}>
-                          {item.qty} x {item.price} = {item.qty * item.price}
+                          {item.qty} x ₹ {item.price} = ₹{" "}
+                          {item.qty * item.price}
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -73,17 +89,19 @@ const PlaceOrderScreen = () => {
               <ListGroup.Item>
                 <Row>
                   <Col>Items</Col>
-                  <Col>{"dasdasd"}</Col>
+                  <Col>₹ {cart.itemPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>convenience fee</Col>
+                  <Col>₹ {cart.convenienceFee}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Total</Col>
+                  <Col>₹ {cart.total}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>

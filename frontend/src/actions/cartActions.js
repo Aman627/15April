@@ -3,6 +3,7 @@ import {
   ADD_NEW_SHIPPING_ADDRESS_FAIL,
   ADD_NEW_SHIPPING_ADDRESS_REQUEST,
   ADD_NEW_SHIPPING_ADDRESS_SUCCESS,
+  CART_SAVE_SHIPPING_ADDRESS,
   CART_ADD_ITEM,
   CART_REMOVE_ITEM,
 } from "../constants/cartConstants";
@@ -34,6 +35,15 @@ export const removeFromCart = (id) => async (dispatch, getState) => {
   });
 
   localStorage.setItem("cartItems", JSON.stringify(getState().cart.cartItems));
+};
+
+export const saveShippingAddress = (data) => async (dispatch) => {
+  dispatch({
+    type: CART_SAVE_SHIPPING_ADDRESS,
+    payload: data,
+  });
+
+  localStorage.setItem("shippingAddress", JSON.stringify(data));
 };
 
 export const newShppingAddress = (address) => async (dispatch, getState) => {
