@@ -3,7 +3,6 @@ import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
-import CheckoutSteps from "../components/CheckoutSteps";
 import { createOrder, getOrderDetails } from "../actions/orderActions";
 import Loader from "../components/Loader";
 
@@ -20,8 +19,10 @@ const OrderScreen = () => {
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, lodaing, error } = orderDetails;
   useEffect(() => {
-    dispatch(getOrderDetails(id));
-  }, []);
+    if (!order || order._id !== id) {
+      dispatch(getOrderDetails(id));
+    }
+  }, [order, id]);
 
   return lodaing ? (
     <Loader />
@@ -29,10 +30,13 @@ const OrderScreen = () => {
     <Message variant="danger">{error}</Message>
   ) : (
     <>
-      <CheckoutSteps step1 step2 step3 step4 />
       <Row>
         <Col md={8}>
           <ListGroup variant="flush">
+            <ListGroup.Item>
+              <h2>Order Id:</h2>
+              <strong>{order._id}</strong>
+            </ListGroup.Item>
             <ListGroup.Item>
               <h2>Shipping</h2>
               <p>
