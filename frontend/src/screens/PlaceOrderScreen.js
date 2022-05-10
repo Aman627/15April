@@ -129,14 +129,16 @@ const PlaceOrderScreen = () => {
                 {error && <Message variant="danger">{error}</Message>}
               </ListGroup.Item>
               <ListGroup.Item>
-                <Button
-                  type="button"
-                  className="btn-block"
-                  disabled={cart.cartItems.length === 0}
-                  onClick={placeOrderHandler}
-                >
-                  Palce order
-                </Button>
+                <Row>
+                  <Button
+                    type="button"
+                    className="btn-block"
+                    disabled={cart.cartItems.length === 0}
+                    onClick={placeOrderHandler}
+                  >
+                    Palce order
+                  </Button>
+                </Row>
               </ListGroup.Item>
             </ListGroup>
           </Card>

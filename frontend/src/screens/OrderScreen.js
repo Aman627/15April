@@ -1,12 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import { createOrder, getOrderDetails } from "../actions/orderActions";
 import Loader from "../components/Loader";
+import axios from "axios";
+import { ORDER_PAY_RESET } from "../constants/orderConstants";
 
 const OrderScreen = () => {
+  const [paytmScriptReady, setPaytmScriptReady] = useState(false);
   const { id } = useParams();
 
   const navigate = useNavigate();
@@ -18,11 +21,60 @@ const OrderScreen = () => {
 
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, lodaing, error } = orderDetails;
+
+  const orderPay = useSelector((state) => state.orderPay);
+  const { lodaing: loadingPay, success: successPay } = orderPay;
+
   useEffect(() => {
-    if (!order || order._id !== id) {
+    const addPaytmScript = async () => {
+      const { data } = await axios.get("/api/paytm/config/");
+      //get the token from backend Initiate Transaction API
+      console.log(data.PAYTM_HOST);
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.async = true;
+      script.src = `${data.PAYTM_HOST}/merchantpgpui/checkoutjs/merchants/${data.PAYTM_MID}.js`;
+      script.onload = () => {
+        setPaytmScriptReady(true);
+        //create config data
+        let config = {
+          root: "",
+          flow: "DEFAULT",
+          data: {
+            orderId: order._id,
+            token: "" /* update token value */,
+            tokenType: "TXN_TOKEN",
+            amount: order.totalPrice,
+          },
+          handler: {
+            notifyMerchant: function (eventName, data) {
+              console.log("notifyMerchant handler function called");
+              console.log("eventName => ", eventName);
+              console.log("data => ", data);
+            },
+          },
+        };
+      };
+      document.body.appendChild(script);
+    };
+
+    addPaytmScript();
+
+    if (!order || successPay) {
+      dispatch({ type: ORDER_PAY_RESET });
       dispatch(getOrderDetails(id));
+    } else if (!order.isPaid) {
+      if (!window.paytm || !window.Paytm.CheckoutJS) {
+        addPaytmScript();
+      } else {
+        setPaytmScriptReady(true);
+      }
     }
-  }, [order, id]);
+  }, [dispatch, order, id]);
+
+  const makePayment = () => {
+    console.log("make payment");
+  };
 
   return lodaing ? (
     <Loader />
@@ -134,6 +186,20 @@ const OrderScreen = () => {
                 </Row>
               </ListGroup.Item>
             </ListGroup>
+            {!order.isPaid && (
+              <ListGroup.Item>
+                {loadingPay && <Loader />}
+                {!setPaytmScriptReady ? (
+                  <Loader />
+                ) : (
+                  <Row>
+                    <Button className="btn-block" onClick={makePayment}>
+                      proceed to pay
+                    </Button>
+                  </Row>
+                )}
+              </ListGroup.Item>
+            )}
           </Card>
         </Col>
       </Row>

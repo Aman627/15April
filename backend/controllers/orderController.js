@@ -1,5 +1,4 @@
 const asyncHandler = require("express-async-handler");
-const { create } = require("../models/Order");
 const Order = require("../models/Order");
 
 // @desc create new order
@@ -74,4 +73,8 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { addOrderItems, getOrderById, updateOrderToPaid };
+module.exports = {
+  addOrderItems,
+  getOrderById,
+  updateOrderToPaid,
+};
